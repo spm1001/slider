@@ -46,7 +46,7 @@ function formatPresentation() {
 }
 
 function processPresentation(presentationId) {
-  const config = getDefaultConfig();
+  const config = getConfigWithPersistedToggleMode(presentationId);
   const formatter = new SlideFormatter(config);
   return formatter.formatPresentation(presentationId);
 }

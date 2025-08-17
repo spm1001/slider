@@ -27,6 +27,26 @@ class SlideFormatter {
       
       Logger.log(`Found ${textElements.length} text elements and ${tableElements.length} table elements`);
       
+      // Universal font toggle logic
+      if (this.config.universalToggle) {
+        const discoveredFonts = this.discoverAllFonts(textElements, tableElements);
+        Logger.log(`Font discovery complete. Found ${discoveredFonts.length} unique fonts`);
+        
+        // Create universal mappings based on current toggle mode
+        const universalMappings = createUniversalFontMappings(discoveredFonts, this.config.toggleMode);
+        
+        // Toggle the mode for next run BEFORE processing
+        const nextMode = (this.config.toggleMode === 'to_comic_sans') ? 'to_arial' : 'to_comic_sans';
+        Logger.log(`Toggle mode will switch to: ${nextMode} for next run`);
+        
+        // Persist the next toggle mode for future runs
+        persistToggleMode(presentationId, nextMode);
+        
+        // Replace the config font mappings with universal ones
+        this.config.fontMappings = universalMappings;
+        Logger.log(`Switched to universal font mappings: ${Object.keys(universalMappings).length} mappings created`);
+      }
+      
       this.processTextElements(presentationId, textElements);
       this.processTableElements(presentationId, tableElements);
       
@@ -229,6 +249,37 @@ class SlideFormatter {
             
             Logger.log(`Font change: ${currentFont} → ${newFont} in element ${elementInfo.elementId}`);
           }
+        } else {
+          // Handle elements with no fontFamily (default font)
+          const defaultNewFont = this.config.fontMappings['DEFAULT_FONT'];
+          if (defaultNewFont) {
+            fontsFound.add('DEFAULT_FONT');
+            const request = {
+              updateTextStyle: {
+                objectId: elementInfo.elementId,
+                fields: 'fontFamily',
+                style: {
+                  fontFamily: defaultNewFont
+                },
+                textRange: {
+                  type: 'ALL'
+                }
+              }
+            };
+            
+            requests.push(request);
+            
+            this.results.fontChanges.push({
+              elementId: elementInfo.elementId,
+              slideId: elementInfo.slideId,
+              slideIndex: elementInfo.slideIndex,
+              fromFont: 'Arial (default)',
+              toFont: defaultNewFont,
+              isNotesPage: elementInfo.isNotesPage || false
+            });
+            
+            Logger.log(`Default font change: Arial (default) → ${defaultNewFont} in element ${elementInfo.elementId}`);
+          }
         }
       }
     }
@@ -318,6 +369,78 @@ class SlideFormatter {
     return report;
   }
   
+  discoverAllFonts(textElements, tableElements) {
+    const discoveredFonts = new Set();
+    
+    Logger.log(`Starting font discovery across ${textElements.length} text elements and ${tableElements.length} table elements`);
+    
+    // Discover fonts in text elements
+    for (const elementInfo of textElements) {
+      const shape = elementInfo.element.shape;
+      
+      // DIAGNOSTIC: Log complete element structure
+      Logger.log(`=== Element ${elementInfo.elementId} Analysis ===`);
+      Logger.log(`Has shape.text: ${!!shape.text}`);
+      
+      if (shape.text) {
+        Logger.log(`Text elements count: ${shape.text.textElements ? shape.text.textElements.length : 0}`);
+        Logger.log(`Text structure: ${JSON.stringify(shape.text, null, 2)}`);
+        
+        if (shape.text.textElements) {
+          for (let i = 0; i < shape.text.textElements.length; i++) {
+            const textElement = shape.text.textElements[i];
+            Logger.log(`  TextElement[${i}]: hasTextRun=${!!textElement.textRun}, hasStyle=${!!(textElement.textRun && textElement.textRun.style)}`);
+            
+            if (textElement.textRun && textElement.textRun.style) {
+              const style = textElement.textRun.style;
+              Logger.log(`  Style properties: ${JSON.stringify(Object.keys(style))}`);
+              Logger.log(`  FontFamily: ${style.fontFamily || 'UNDEFINED'}`);
+              
+              if (style.fontFamily) {
+                const font = style.fontFamily;
+                discoveredFonts.add(font);
+                Logger.log(`  ✅ Discovered font: ${font}`);
+              } else {
+                Logger.log(`  ℹ️ No fontFamily (default font) - will use DEFAULT_FONT mapping`);
+              }
+            } else {
+              Logger.log(`  ⚠️ Missing textRun or style`);
+            }
+          }
+        } else {
+          Logger.log(`  ⚠️ No textElements array`);
+        }
+      } else {
+        Logger.log(`  ⚠️ No shape.text property`);
+      }
+      Logger.log(`=== End Element ${elementInfo.elementId} ===`);
+    }
+    
+    // Discover fonts in table elements
+    for (const elementInfo of tableElements) {
+      const table = elementInfo.element.table;
+      for (let rowIndex = 0; rowIndex < table.tableRows.length; rowIndex++) {
+        const row = table.tableRows[rowIndex];
+        for (let colIndex = 0; colIndex < row.tableCells.length; colIndex++) {
+          const cell = row.tableCells[colIndex];
+          if (cell.text && cell.text.textElements) {
+            for (const textElement of cell.text.textElements) {
+              if (textElement.textRun && textElement.textRun.style && textElement.textRun.style.fontFamily) {
+                const font = textElement.textRun.style.fontFamily;
+                discoveredFonts.add(font);
+                Logger.log(`Discovered font in table ${elementInfo.elementId} [${rowIndex},${colIndex}]: ${font}`);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    const fontsArray = Array.from(discoveredFonts).sort();
+    Logger.log(`Font discovery summary: Found ${fontsArray.length} unique fonts: [${fontsArray.join(', ')}]`);
+    return fontsArray;
+  }
+
   generateSuccessReport() {
     let report = `Formatting Results:\n\n`;
     report += `Total Elements: ${this.results.totalElements}\n`;

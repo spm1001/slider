@@ -4,6 +4,31 @@ This file records technical concepts learned during development, with step-by-st
 
 ---
 
+## File Location Assumptions - A Pattern to Fix
+
+**Original Problem**: When user mentions a file like "Screenshot 2025-08-17 at 15.37.18.png", I consistently assume it's in `/tmp/` instead of checking the current working directory first.
+
+**Why This Happens**: 
+- Environment info lists `/tmp` as an "additional working directory"  
+- Many development tools use `/tmp` for temporary files
+- I may be over-generalizing from CLI tool patterns
+
+**The Correct Approach**:
+1. **First check current working directory** (`pwd` to confirm)
+2. **Then check common locations** if not found locally
+3. **Never assume `/tmp`** unless explicitly told
+
+**Why This Matters**:
+- Users expect files they reference to be in their working context
+- `/tmp` is for system temporary files, not user content
+- This creates friction and confusion in development workflow
+
+**New Pattern**: When a file is mentioned, always check `./filename` first, then ask for clarification if not found.
+
+**Connection to Project**: This is part of developing better development loop efficiency - reducing friction and assumptions that slow down debugging.
+
+---
+
 ## OAuth Scopes vs Client Configuration - A Critical Distinction
 
 **Original Question**: Why was OAuth consent spinning when we added the Cloud Logging scope?
@@ -424,6 +449,117 @@ This learning connects to:
 - Dual authentication pattern implementation
 - Error message interpretation and escalation debugging
 - OAuth token lifecycle management (access tokens vs refresh tokens)
+
+---
+
+## Session 4: Apps Script Execution Type Discovery - The Key to Intelligent Log Filtering
+
+### The Problem That Drove Investigation
+**User's observation**: "I got the sense there that something needs to be streamlined in how you get the logs? Is there a time lag before you can see them?"
+
+**Context**: Our development loop was working, but log retrieval was using crude 1-hour time windows that sometimes missed recent executions or included irrelevant manual runs.
+
+### The Critical Discovery
+**User provided screenshot**: Apps Script execution dashboard showing a "Type" column with two distinct values:
+- **"Execution API"** - Programmatic executions (triggered by my scripts)
+- **"Editor"** - Manual executions (triggered by user clicking Run in the IDE)
+
+### Why This Discovery Is Transformational
+
+**Before**: Using crude time-based windows
+```javascript
+// Old approach - imprecise and unreliable
+const filter = [
+  `timestamp >= "${startTime.toISOString()}"`,
+  `timestamp <= "${endTime.toISOString()}"`,
+  `resource.type="app_script_function"`
+].join(' AND ');
+```
+
+**After**: Using execution-type-specific filtering
+```javascript
+// New approach - precise and reliable
+const filter = [
+  `timestamp >= "${startTime.toISOString()}"`,
+  `timestamp <= "${endTime.toISOString()}"`,
+  `resource.type="app_script_function"`,
+  // Filter specifically for API executions (not Editor)
+  `jsonPayload.execution_type="Execution API" OR textPayload:"Execution API"`
+].join(' AND ');
+```
+
+### Technical Implementation
+
+**The Solution Architecture**:
+1. **Execution-Specific Identification**: Search only for "Execution API" logs, not manual "Editor" runs
+2. **Intelligent Polling**: If logs aren't immediately available, poll specifically for API executions
+3. **Fallback Strategy**: If API-specific filtering fails, fall back to general filtering with clear categorization
+
+### Key Principles Learned
+
+**Metadata Is Your Friend**: Apps Script provides execution metadata that distinguishes between different trigger sources. This metadata is the key to precise filtering.
+
+**Log Correlation Strategy**:
+- **Step 1**: Execute test and record precise timestamps
+- **Step 2**: Search specifically for "Execution API" logs after that timestamp  
+- **Step 3**: If not found immediately, poll until available
+- **Step 4**: Display only relevant logs, filtering out manual runs
+
+**Why Generic Time Windows Fail**:
+- Include irrelevant manual executions from user testing
+- May miss recent executions due to log ingestion delays
+- Create ambiguity about which execution the logs belong to
+- Don't account for timezone differences or clock skew
+
+### The Development Loop Optimization
+
+**New Intelligent Workflow**:
+```bash
+npm test  # Now uses intelligent-log-retrieval.js
+# 1. Execute testFontSwap via Apps Script API 
+# 2. Record execution metadata (start/end times)
+# 3. Search for "Execution API" logs specifically
+# 4. If not found, enter polling mode with 15-second intervals
+# 5. Display filtered results excluding manual runs
+# 6. Timeout after 5 minutes if logs don't appear
+```
+
+**Performance Benefits**:
+- **Precision**: Only shows logs from programmatic executions
+- **Speed**: No more waiting for irrelevant manual executions to be filtered out
+- **Reliability**: Polling ensures logs are retrieved even with ingestion delays
+- **Clarity**: Clear separation of API vs Editor executions
+
+### Technical Architecture Insights
+
+**Apps Script Logging Architecture**: 
+- All executions (API + Editor) write to the same Google Cloud Logging resource
+- Execution type is preserved as metadata in log entries
+- Cloud Logging API supports advanced filtering on this metadata
+- This filtering capability was previously undiscovered in our implementation
+
+**Cloud Logging Query Language**:
+- Supports boolean logic: `OR`, `AND` operators
+- JSON payload filtering: `jsonPayload.field_name="value"`
+- Text payload searching: `textPayload:"search_term"`
+- Timestamp range filtering with ISO 8601 format
+
+### Connection to Previous Learning
+
+This builds on:
+- **OAuth Security Architecture**: The proper authentication enables Cloud Logging API access
+- **Git History Management**: The security incident led to implementing proper API key management
+- **Development Loop Optimization**: This completes the "turbo" development workflow
+
+### Broader Applications
+
+**Pattern Recognition**: Any system with multiple execution contexts can benefit from execution-type filtering:
+- CI/CD systems (manual vs automated builds)  
+- Database operations (user vs system queries)
+- API usage (human vs machine clients)
+- Monitoring systems (alerts vs status checks)
+
+**The Meta-Learning**: **Always look for distinguishing metadata** when dealing with mixed execution contexts. The key to precise filtering often lies in metadata that systems automatically generate but developers overlook.
 
 ---
 

@@ -4,12 +4,105 @@ function getDefaultConfig() {
       'Comic Sans MS': 'Arial',
       'Arial': 'Comic Sans MS'
     },
+    universalToggle: true,  // Enable universal font toggling
+    toggleMode: 'to_comic_sans',  // 'to_comic_sans' or 'to_arial'
     processNotes: true,
     skipErrors: true,
     batchSize: 50,
     apiRetries: 3,
     apiRetryDelay: 1000
   };
+}
+
+function getConfigWithPersistedToggleMode(presentationId) {
+  const config = getDefaultConfig();
+  
+  // Try to retrieve persisted toggle mode from presentation
+  try {
+    const persistedMode = getPersistedToggleMode(presentationId);
+    if (persistedMode) {
+      config.toggleMode = persistedMode;
+      Logger.log(`Retrieved persisted toggle mode: ${persistedMode}`);
+    } else {
+      Logger.log(`No persisted toggle mode found, using default: ${config.toggleMode}`);
+    }
+  } catch (error) {
+    Logger.log(`Error retrieving persisted toggle mode: ${error.toString()}`);
+  }
+  
+  return config;
+}
+
+function getPersistedToggleMode(presentationId) {
+  try {
+    // Use PropertiesService for simple, reliable persistence
+    const properties = PropertiesService.getScriptProperties();
+    const key = `toggle_mode_${presentationId}`;
+    const persistedMode = properties.getProperty(key);
+    
+    if (persistedMode && (persistedMode === 'to_comic_sans' || persistedMode === 'to_arial')) {
+      Logger.log(`Found persisted toggle mode: ${persistedMode}`);
+      return persistedMode;
+    }
+    
+    return null; // No persisted mode found
+  } catch (error) {
+    Logger.log(`Error reading persisted toggle mode: ${error.toString()}`);
+    return null;
+  }
+}
+
+function persistToggleMode(presentationId, toggleMode) {
+  try {
+    // Use PropertiesService for simple, reliable persistence
+    const properties = PropertiesService.getScriptProperties();
+    const key = `toggle_mode_${presentationId}`;
+    
+    properties.setProperty(key, toggleMode);
+    
+    Logger.log(`Persisted toggle mode: ${toggleMode} for presentation ${presentationId}`);
+    return true;
+  } catch (error) {
+    Logger.log(`Error persisting toggle mode: ${error.toString()}`);
+    return false;
+  }
+}
+
+function createUniversalFontMappings(discoveredFonts, toggleMode) {
+  const mappings = {};
+  
+  Logger.log(`Creating universal font mappings in mode: ${toggleMode}`);
+  Logger.log(`Discovered fonts: [${discoveredFonts.join(', ')}]`);
+  
+  // Add implicit Arial mapping for elements with no fontFamily (default font)
+  const allFonts = [...discoveredFonts];
+  if (!allFonts.includes('Arial')) {
+    allFonts.push('Arial');
+    Logger.log(`Added implicit Arial font for default elements`);
+  }
+  
+  if (toggleMode === 'to_comic_sans') {
+    // Toggle everything TO Comic Sans MS (except if already Comic Sans MS)
+    for (const font of allFonts) {
+      if (font !== 'Comic Sans MS') {
+        mappings[font] = 'Comic Sans MS';
+      }
+    }
+    // Special mapping for elements with no fontFamily (default = Arial)
+    mappings['DEFAULT_FONT'] = 'Comic Sans MS';
+  } else if (toggleMode === 'to_arial') {
+    // Toggle everything TO Arial (except if already Arial)  
+    for (const font of allFonts) {
+      if (font !== 'Arial') {
+        mappings[font] = 'Arial';
+      }
+    }
+    // Special mapping for elements with no fontFamily (default = Arial stays Arial)
+    // mappings['DEFAULT_FONT'] = 'Arial'; // Not needed, already default
+  }
+  
+  Logger.log(`Generated universal mappings: ${JSON.stringify(mappings)}`);
+  return mappings;
 }
 
 function parseYamlConfig(yamlString) {
