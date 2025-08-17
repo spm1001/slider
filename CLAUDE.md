@@ -142,6 +142,107 @@ Apps Script project successfully deployed and ready for testing. All 7 .gs files
 
 When teaching new technical concepts, always append to `LEARNING_LOG.md` following the established format.
 
+## Security Infrastructure and Procedures
+
+### Critical Security Status
+**🔒 SECURITY POSTURE: HARDENED** - This project has implemented comprehensive security measures following a critical incident response.
+
+### Implemented Security Measures
+
+**Secrets Management System**:
+- ✅ Environment variable architecture (.env.template system)
+- ✅ Comprehensive .gitignore excluding all secret file patterns
+- ✅ Git history cleaned of all exposed credentials
+- ✅ Documentation uses placeholder values only
+
+**Automated Security Validation**:
+- ✅ Pre-commit hooks for secret detection
+- ✅ Automated security scanning (`npm run security:check`)
+- ✅ Git pre-commit validation preventing secret commits
+- ✅ Multiple detection layers (pattern matching, file scanning, documentation review)
+
+**Security Documentation**:
+- ✅ Complete incident response procedures (`secrets/incident-response.md`)
+- ✅ Detailed setup guides (`secrets/setup-guide.md`, `secrets/README.md`)
+- ✅ Security requirements integrated into SPECIFICATION.md
+- ✅ Global security preferences in ~/.claude/CLAUDE.md
+
+**Emergency Response Capability**:
+- ✅ Proven incident response procedures (successfully cleaned exposed API key)
+- ✅ Git history rewriting capabilities
+- ✅ Rapid credential revocation and replacement processes
+- ✅ Comprehensive monitoring and detection systems
+
+### Security Commands and Tools
+
+**Daily Security Operations**:
+```bash
+npm run security:check     # Run comprehensive security validation
+npm run security:setup     # Install and configure security tools
+./scripts/security-check.sh # Direct security validation script
+pre-commit run --all       # Run all pre-commit security hooks
+```
+
+**Emergency Response**:
+```bash
+# IF SECRETS ARE EXPOSED:
+# 1. STOP all work immediately
+# 2. Revoke credentials at source (Google Cloud Console)
+# 3. Follow procedures in secrets/incident-response.md
+# 4. Run git history cleaning
+# 5. Force push cleaned history
+# 6. Generate new credentials
+```
+
+### Security Validation Requirements
+
+**Before ANY commit**:
+- [ ] Run `npm run security:check` and ensure it passes
+- [ ] Verify no real API keys, passwords, or tokens in any files
+- [ ] Confirm all secrets are in environment variables
+- [ ] Check documentation uses placeholder values only
+
+**Before ANY deployment**:
+- [ ] Validate .env file contains all required variables
+- [ ] Test credentials in secure environment
+- [ ] Verify API key restrictions are properly configured
+- [ ] Confirm OAuth scopes are minimal and appropriate
+
+### Lessons Learned from Security Incident
+
+**Root Cause**: API key hardcoded in documentation and configuration files, then committed to public repository.
+
+**Prevention Measures Implemented**:
+1. **Global Security Culture**: Updated ~/.claude/CLAUDE.md with mandatory security practices
+2. **Design-Time Security**: Added comprehensive security requirements to SPECIFICATION.md
+3. **Automated Prevention**: Implemented pre-commit hooks and security scanning
+4. **Repository Defaults**: Default to private repositories, security review before public
+5. **Response Capability**: Proven procedures for rapid incident response
+
+**Key Insights**:
+- Security must be designed in from day one, not added later
+- Multiple layers of prevention are essential (one layer will eventually fail)
+- Rapid response capabilities are critical for minimizing exposure impact
+- Documentation and training are as important as technical controls
+
+### Ongoing Security Maintenance
+
+**Monthly Tasks**:
+- Review repository for accidentally committed secrets
+- Validate all security tools are working correctly
+- Update security documentation as needed
+
+**Quarterly Tasks**:
+- Rotate API keys and credentials
+- Review and update security procedures
+- Test incident response procedures
+
+**Project Security Contacts**:
+- Primary: Project owner (immediate credential revocation authority)
+- Escalation: [To be defined based on organization]
+
+When teaching new technical concepts, always append to `LEARNING_LOG.md` following the established format.
+
 ## Implementation Notes
 
 ### User Interface Requirements

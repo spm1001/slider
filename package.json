@@ -6,7 +6,11 @@
   "scripts": {
     "deploy": "node deploy-web-manual.js",
     "test": "echo 'No tests specified'",
-    "clean": "rm -f token.json"
+    "clean": "rm -f token.json",
+    "security:check": "./scripts/security-check.sh",
+    "security:setup": "./scripts/setup-security.sh",
+    "security:scan": "npm run security:check",
+    "precommit": "npm run security:check"
   },
   "keywords": [
     "google-apps-script",

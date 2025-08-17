@@ -1,0 +1,62 @@
+# Pre-commit configuration for Google Slides Formatter security
+# Install with: pip install pre-commit && pre-commit install
+
+repos:
+  # Local security validation
+  - repo: local
+    hooks:
+      - id: security-check
+        name: Security Check
+        entry: ./scripts/security-check.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit, manual]
+
+  # Built-in pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # Security-focused hooks
+      - id: detect-private-key
+        name: Detect Private Keys
+      - id: check-added-large-files
+        name: Check for Large Files
+        args: ['--maxkb=1000']
+      
+      # General quality hooks
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+      - id: end-of-file-fixer
+        name: Fix End of Files
+      - id: check-json
+        name: Check JSON
+      - id: check-yaml
+        name: Check YAML
+      - id: check-merge-conflict
+        name: Check for Merge Conflicts
+
+  # Advanced secret detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect Secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            LEARNING_LOG\.md|
+            secrets/incident-response\.md|
+            \.secrets\.baseline
+          )$
+
+  # Additional security tools (optional)
+  - repo: https://github.com/gitguardian/ggshield
+    rev: v1.21.0
+    hooks:
+      - id: ggshield
+        name: GitGuardian Shield
+        entry: ggshield secret scan pre-commit
+        language: python
+        stages: [commit, manual]
+        # Requires GITGUARDIAN_API_KEY environment variable

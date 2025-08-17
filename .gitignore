@@ -36,6 +36,7 @@ secrets/*token*
 secrets/*key*
 *credentials*
 *token*
+*secret*
 
 # Temporary Files and Logs
 *.log

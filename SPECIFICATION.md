@@ -5,6 +5,160 @@
 ## Overview
 This tool is meant to work on a Google Slides presentation and any linked objects, especially graphics charts inserted from Google Sheets, and ensure that everything is consistently formatted according to our standard template.
 
+## Security and Secrets Management Requirements
+
+### Critical Security Design Principles
+
+This project handles sensitive Google API credentials and must implement comprehensive secrets management from day one. **Security is a primary architectural requirement, not a secondary consideration.**
+
+#### Mandatory Security Infrastructure
+
+**Environment Variable Architecture**:
+- ALL secrets and configuration MUST use environment variables
+- NO hardcoded API keys, tokens, or credentials in any code or configuration files
+- Create `.env.template` documenting all required variables before any development
+- Implement startup validation to ensure all required environment variables are present
+
+**Repository Security**:
+- Comprehensive `.gitignore` MUST exclude all secret files before first commit
+- Repository MUST be private initially, only made public after security review
+- All documentation MUST use placeholder values: `YOUR_API_KEY_HERE`, `your-secret-here`
+- Pre-commit security validation MUST be implemented
+
+**API Key Management**:
+- Apply principle of least privilege to all API keys
+- Restrict API keys to minimum required services (Custom Search API, Apps Script API, etc.)
+- Implement separate keys for development, staging, and production environments
+- Document key rotation procedures and schedules
+
+#### Security Boundaries and Threat Model
+
+**Threat Assessment**:
+- Public repository exposure (highest risk - complete credential compromise)
+- Unauthorized API usage (medium risk - billing impact, quota exhaustion)
+- Man-in-the-middle attacks (low risk - HTTPS mitigates)
+- Local credential theft (medium risk - environment variable protection)
+
+**Mitigation Strategies**:
+- Environment variable storage for all secrets
+- Git history protection (never commit real secrets)
+- API key restrictions and monitoring
+- Regular credential rotation
+- Security incident response procedures
+
+#### Required Security Documentation
+
+**Security Setup Guide** (`secrets/setup-guide.md`):
+- Complete credential generation procedures
+- Environment variable configuration steps
+- API key restriction configuration
+- Security validation checklists
+
+**Incident Response Procedures** (`secrets/incident-response.md`):
+- Steps for credential compromise response
+- Git history cleaning procedures
+- Emergency contact information
+- Lessons learned documentation templates
+
+### Authentication and Authorization Architecture
+
+#### Google Cloud Platform Security
+
+**Project Configuration**:
+- Project ID: `mit-dev-362409` (development environment)
+- Separate projects MUST be used for staging and production
+- Billing alerts MUST be configured to detect unauthorized usage
+- API usage monitoring MUST be enabled
+
+**OAuth 2.0 Security**:
+- Web application OAuth clients for deployment (not desktop clients)
+- Minimum required scopes: presentations, drive.readonly, spreadsheets
+- Deployment scopes: drive, drive.scripts, script.projects
+- Token storage in environment variables only
+
+**API Key Security**:
+- Custom Search API key restricted to Google Workspace documentation
+- Apps Script API access through OAuth only
+- Regular key rotation (quarterly for development, monthly for production)
+- Usage monitoring and alerting
+
+### Data Protection and Privacy
+
+#### Sensitive Data Handling
+
+**Presentation Data**:
+- Process presentations in-memory only
+- NO persistent storage of presentation content
+- Minimal data retention (process and discard)
+- User consent for presentation access
+
+**Credential Storage**:
+- Local environment variables only
+- NO credential persistence in application
+- Secure token refresh mechanisms
+- Automatic token expiration handling
+
+**Logging and Monitoring**:
+- NO secrets in application logs
+- Redact all potentially sensitive information
+- Structured logging for security audit trails
+- Regular log review and analysis
+
+### Security Testing and Validation
+
+#### Pre-Deployment Security Checks
+
+**Automated Security Validation**:
+- Secret scanning in all files before commit
+- Environment variable validation at startup
+- API key functionality testing with restricted permissions
+- OAuth flow validation in secure environment
+
+**Manual Security Review**:
+- Code review with security checklist
+- Documentation review for accidental secret exposure
+- Configuration review for hardcoded values
+- Incident response procedure testing
+
+#### Ongoing Security Maintenance
+
+**Regular Security Tasks**:
+- Monthly repository scans for accidentally committed secrets
+- Quarterly API key rotation and validation
+- Annual security architecture review
+- Continuous monitoring of API usage patterns
+
+**Security Metrics and KPIs**:
+- Zero tolerance for committed secrets
+- 100% environment variable coverage for configuration
+- <24 hour response time for security incidents
+- Regular security training and awareness updates
+
+### Compliance and Governance
+
+#### Security Governance Framework
+
+**Roles and Responsibilities**:
+- Developer: Implement security requirements, follow procedures
+- Security Reviewer: Validate security implementation, approve deployments
+- Incident Commander: Lead response to security incidents
+
+**Security Review Gates**:
+- Design phase: Security requirements validation
+- Development phase: Code and configuration review
+- Deployment phase: Security testing and approval
+- Production phase: Monitoring and incident response
+
+**Documentation Requirements**:
+- All security decisions MUST be documented
+- Security incidents MUST be logged and analyzed
+- Regular security architecture updates
+- Compliance audit trail maintenance
+
+---
+
+**Security Requirement Summary**: This project MUST implement comprehensive secrets management, environment variable architecture, and security monitoring before any development begins. Security failures that result in credential exposure are considered critical incidents requiring immediate response and remediation.
+
 ## Technical Architecture
 
 ### Project Structure
