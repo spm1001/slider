@@ -17,6 +17,9 @@ class SlideFormatter {
       const pageElements = this.apiClient.getAllPageElements(presentationId);
       Logger.log(`Found ${pageElements.length} page elements to process`);
       
+      // Enhanced diagnostic logging
+      this.logElementTypes(pageElements);
+      
       this.results.totalElements = pageElements.length;
       
       const textElements = this.apiClient.getTextElements(pageElements);
@@ -42,6 +45,36 @@ class SlideFormatter {
       });
       throw error;
     }
+  }
+  
+  logElementTypes(pageElements) {
+    const elementTypes = {};
+    pageElements.forEach((elementInfo, index) => {
+      const element = elementInfo.element;
+      let type = 'unknown';
+      
+      if (element.shape) {
+        if (element.shape.text) type = 'shape_with_text';
+        else type = 'shape_no_text';
+      } else if (element.table) {
+        type = 'table';
+      } else if (element.image) {
+        type = 'image';
+      } else if (element.video) {
+        type = 'video';
+      } else if (element.line) {
+        type = 'line';
+      }
+      
+      elementTypes[type] = (elementTypes[type] || 0) + 1;
+      
+      // Log details for first few elements
+      if (index < 3) {
+        Logger.log(`Element ${index}: type=${type}, id=${element.objectId}, shape=${!!element.shape}, text=${!!(element.shape && element.shape.text)}`);
+      }
+    });
+    
+    Logger.log(`Element type breakdown: ${JSON.stringify(elementTypes)}`);
   }
   
   processTextElements(presentationId, textElements) {
@@ -158,6 +191,7 @@ class SlideFormatter {
     }
     
     const textElements = shape.text.textElements;
+    const fontsFound = new Set();
     
     for (const textElement of textElements) {
       if (textElement.textRun && textElement.textRun.style) {
@@ -165,6 +199,7 @@ class SlideFormatter {
         
         if (style.fontFamily) {
           const currentFont = style.fontFamily;
+          fontsFound.add(currentFont);
           const newFont = this.config.fontMappings[currentFont];
           
           if (newFont && newFont !== currentFont) {
@@ -196,6 +231,11 @@ class SlideFormatter {
           }
         }
       }
+    }
+    
+    // Log fonts found in this element
+    if (fontsFound.size > 0) {
+      Logger.log(`Element ${elementInfo.elementId} fonts: [${Array.from(fontsFound).join(', ')}]`);
     }
     
     return requests;

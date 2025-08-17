@@ -28,6 +28,16 @@ This project provides a complete Google Apps Script solution for formatting Goog
 
 ## 🏃‍♂️ Quick Start
 
+### 🚀 New Machine Setup (Essential Steps)
+
+**If you're setting up on a new development machine**, these are the critical steps:
+
+1. **Clone & Install**: `git clone https://github.com/spm1001/slider.git && cd slider && npm install`
+2. **Environment Variables**: `cp .env.template .env` then edit `.env` with your API keys ⚠️ **MANDATORY**
+3. **OAuth Credentials**: Place your `credentials.json` file in project root
+4. **Deploy**: `npm run deploy` and complete OAuth flow
+5. **Enable User APIs**: Visit https://script.google.com/home/usersettings ⚠️ **CRITICAL**
+
 ### Prerequisites
 - Node.js 14+
 - Google Cloud Project with billing enabled
@@ -55,14 +65,16 @@ npm install
 
 This user-level permission is required in addition to project-level API enablement. Without this step, deployment will fail with permission errors.
 
-### 2️⃣.6 Configure Environment Variables
+### 2️⃣.6 Configure Environment Variables ⚠️ **REQUIRED**
 ```bash
 # Copy template and fill in your API keys
 cp .env.template .env
 # Edit .env with your actual API keys:
-# GOOGLE_API_KEY=your_development_key_here
-# DEPLOYMENT_API_KEY=your_deployment_key_here
+# GOOGLE_API_KEY=your_development_key_here (for MCP documentation lookup)
+# DEPLOYMENT_API_KEY=your_deployment_key_here (for Apps Script deployment)
 ```
+
+**🔑 This step is mandatory** - deployment will fail without both API keys properly configured in `.env`
 
 ### 3️⃣ Deploy
 ```bash

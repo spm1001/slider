@@ -11,14 +11,30 @@ This is a Google Apps Script development project for creating a Google Slides an
 This project has a comprehensive technical specification (see readme.md) ready for implementation. All development will use Google Apps Script (.gs files) and the Google Workspace APIs.
 
 ### Project Structure
-The Apps Script project will follow this modular organization:
-- `main.gs` - Entry point and orchestration
-- `config.gs` - YAML configuration management  
-- `slides-api.gs` - Google Slides API interactions
-- `formatter.gs` - Core formatting logic
-- `ui.gs` - User interface and progress reporting
-- `utils.gs` - Utility functions and helpers
-- `constants.gs` - API scopes, constants, and mappings
+```
+/home/modha/slider/
+├── docs/               # Documentation for machine transfer
+│   ├── CLAUDE.md       # Project instructions (this file)
+│   ├── LEARNING_LOG.md # Technical learning documentation
+│   ├── MACHINE_TRANSFER.md # New machine setup guide
+│   └── SECURITY_ALERT.md   # Security procedures
+├── src/                # Apps Script source files
+│   ├── main.gs         # Entry point and orchestration
+│   ├── config.gs       # YAML configuration management  
+│   ├── slides-api.gs   # Google Slides API interactions
+│   ├── formatter.gs    # Core formatting logic
+│   ├── ui.gs          # User interface and progress reporting
+│   ├── utils.gs       # Utility functions and helpers
+│   └── constants.gs   # API scopes, constants, and mappings
+├── config/            # Configuration files
+│   ├── apps-script-bundle.json # Apps Script project configuration
+│   ├── credentials.template.json # OAuth template
+│   └── workspace-dev-assist.json # MCP workspace config
+├── scripts/           # Deployment & security scripts
+├── secrets/           # Security documentation
+├── mcp-dev-assist-local/ # Custom MCP server
+└── CLOSEDOWN.md       # Session termination trigger
+```
 
 ### Configuration System
 - **Format**: YAML configuration files for designer-friendly editing
@@ -45,7 +61,7 @@ The project will primarily use:
 - **Google Sheets API**: For chart object formatting and data manipulation (Phase 2+)
 
 ### Authentication Requirements
-Required OAuth 2.0 scopes (configured in `apps-script-bundle.json`):
+Required OAuth 2.0 scopes (configured in `config/apps-script-bundle.json`):
 - `https://www.googleapis.com/auth/presentations` - Read and modify presentations
 - `https://www.googleapis.com/auth/drive.readonly` - Access reference templates  
 - `https://www.googleapis.com/auth/spreadsheets` - Chart modifications (Phase 2+)
@@ -100,11 +116,12 @@ The project includes comprehensive testing specifications covering:
 ## Current Project Status
 
 **Apps Script Implementation: COMPLETED** ✅
-- All 7 core .gs files implemented and functional (main, config, slides-api, formatter, ui, utils, constants)
+- All 7 core .gs files implemented and functional (located in `src/` directory)
 - Font swapping logic complete (Comic Sans MS ↔ Arial) with configurable YAML mappings
 - Google Slides API integration with retry logic and intelligent batching
 - Progress UI with halt capability and error reporting
 - Test presentation configured: `1_WxqIvBQ2ArGjUqamVhVYKdAie5YrEgXmmUFMgNNpPA`
+- **Enhanced font discovery logging deployed for debugging**
 - **Phase 1 implementation ready for testing**
 
 **Repository & Version Control: COMPLETED** ✅
@@ -124,6 +141,29 @@ The project includes comprehensive testing specifications covering:
 
 **PROJECT STATUS: DEPLOYMENT COMPLETE** ✅
 Apps Script project successfully deployed and ready for testing. All 7 .gs files uploaded and configured.
+
+## Machine Transfer & Development Setup
+
+### Quick Setup for New Machines
+
+**Essential files for machine transfer:**
+1. **Clone repository**: `git clone https://github.com/spm1001/slider.git`
+2. **Install dependencies**: `npm install`
+3. **Environment setup**: `cp .env.template .env` and configure API keys
+4. **OAuth credentials**: Place `credentials.json` in project root
+5. **Deployment**: `npm run deploy` (uses GitHub Secrets if available)
+
+**Development workflow with session persistence:**
+1. **Start tmux session**: `tmux new-session -s claude-work`
+2. **Navigate to project**: `cd /home/modha/slider` 
+3. **Start Claude**: `claude --resume`
+4. **For SSH disconnections**: Reconnect and `tmux attach -s claude-work`
+
+**Key documentation for new machines:**
+- `docs/MACHINE_TRANSFER.md` - Detailed transfer procedures
+- `docs/SECURITY_ALERT.md` - Security requirements and procedures
+- `README.md` - Complete setup and usage guide
+- `CLOSEDOWN.md` - Session termination procedures
 
 ## Learning and Knowledge Transfer
 

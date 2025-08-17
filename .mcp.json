@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mcp-dev-assist": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "mcp-dev-assist-local/src/index.ts",
+        "--stdio"
+      ],
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyAeOTVUu72ZC_l-VLnFMhCH4VWoOwBeLds",
+        "GOOGLE_SEARCH_ENGINE_ID": "701ecba480bf443fa"
+      }
+    }
+  }
+}
