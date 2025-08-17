@@ -1,1 +1,84 @@
-node_modules
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment Variables and Secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# OAuth Credentials and Tokens
+credentials.json
+token.json
+cloud-token.json
+*.p12
+*.pem
+
+# Claude Code Local Settings
+.claude/
+.claude-code/
+
+# Google Cloud and Apps Script
+gcloud/
+service-account*.json
+*-service-account*.json
+
+# API Keys and Configuration  
+config/secrets.json
+secrets/*.json
+secrets/*.env
+secrets/*credentials*
+secrets/*token*
+secrets/*key*
+*credentials*
+*token*
+
+# Temporary Files and Logs
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build and Distribution
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# Backup Files
+*.bak
+*.backup
+*backup*
+
+# Test Coverage and Reports
+coverage/
+.nyc_output/
+*.lcov
+
+# Security Scan Results
+.snyk
+security-scan-results.*
+
+# Local Development Overrides
+docker-compose.override.yml
+.env.override
