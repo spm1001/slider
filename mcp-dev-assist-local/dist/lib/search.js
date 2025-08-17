@@ -66,3 +66,4 @@ export async function searchLite(query, limit = 10) {
     }
     return results;
 }
+//# sourceMappingURL=search.js.map

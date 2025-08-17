@@ -83,3 +83,4 @@ export async function getReleaseNotes() {
     releaseNotes.sort((a, b) => b.updated.localeCompare(a.updated));
     return releaseNotes;
 }
+//# sourceMappingURL=read.js.map

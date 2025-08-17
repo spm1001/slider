@@ -17,7 +17,7 @@ import { previewCard } from "@googleworkspace/card-dev-assist";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getDocumentationPageMarkdown, getReleaseNotes } from "./read.js";
-import { searchLite } from "./search.js";
+import { search } from "./search.js";
 const INSTRUCTIONS = {
     DOCS: "Always read ALL MCP documentation resources, e.g. `https://developers.google.com/**`, for the full document.",
     RELEASE_NOTES: "ALWAYS read MCP resource, `docs://release-notes`, for information about new features, changes, and bug fixes.",
@@ -73,7 +73,7 @@ export const createServer = () => {
                 ],
             };
         }
-        const searchResults = await searchLite(query);
+        const searchResults = await search(query);
         const TOP_N = 3;
         // read the first TOP_N results
         const resultsWithMarkdown = await Promise.all(searchResults.slice(0, TOP_N).map(async (result) => {
@@ -158,3 +158,4 @@ export const createServer = () => {
     });
     return server;
 };
+//# sourceMappingURL=mcp.js.map

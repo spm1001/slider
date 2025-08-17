@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import dotenv from "dotenv";
-import { z } from "zod";
-dotenv.config();
-export const ENV = z
-    .object({
-    PORT: z.coerce.number().default(Number(process.env.PORT) || 8080),
-    GOOGLE_API_KEY: z.string(),
-    GOOGLE_SEARCH_ENGINE_ID: z.string().default("701ecba480bf443fa"),
-    GOOGLE_DISCOVERY_ENGINE_ID: z
-        .string()
-        .default("mcp-dev-assist_1749747393714"),
-    GOOGLE_PROJECT_NUMBER: z.number().default(594592560835),
-})
-    .parse(process.env);
-//# sourceMappingURL=env.js.map
+export declare function getDocumentationPageMarkdown(uri: URL): Promise<string>;
+export declare function getReleaseNotes(): Promise<{
+    updated: string;
+    id: string;
+    markdown: string;
+}[]>;
+//# sourceMappingURL=read.d.ts.map

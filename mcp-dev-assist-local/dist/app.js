@@ -89,3 +89,4 @@ app.post("/messages", async (req, res) => {
     }
 });
 export { app };
+//# sourceMappingURL=app.js.map

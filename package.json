@@ -2,15 +2,11 @@
   "name": "slide-formatter-deployer",
   "version": "1.0.0",
   "description": "Automated deployment tool for Google Apps Script Slide Formatter project",
-  "main": "deploy.js",
+  "main": "deploy-web-manual.js",
   "scripts": {
-    "deploy": "node deploy.js",
-    "setup": "npm install && node setup-credentials.js",
-    "enable-apis": "node enable-apis.js",
-    "credentials": "node setup-credentials.js",
+    "deploy": "node deploy-web-manual.js",
     "test": "echo 'No tests specified'",
-    "clean": "rm -f token.json cloud-token.json",
-    "full-setup": "npm install && node setup-credentials.js && node enable-apis.js && node deploy.js"
+    "clean": "rm -f token.json"
   },
   "keywords": [
     "google-apps-script",
@@ -26,15 +22,12 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "bin": {
-    "deploy-slide-formatter": "./deploy.js"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/slide-formatter.git"
+    "url": "https://github.com/spm1001/slider.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/slide-formatter/issues"
+    "url": "https://github.com/spm1001/slider/issues"
   },
-  "homepage": "https://github.com/your-username/slide-formatter#readme"
+  "homepage": "https://github.com/spm1001/slider#readme"
 }
