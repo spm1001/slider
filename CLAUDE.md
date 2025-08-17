@@ -1,0 +1,140 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is a Google Apps Script development project for creating a Google Slides and Sheets formatting tool. The project aims to automatically format Google Slides presentations and linked Google Sheets charts according to a standard template.
+
+## Development Environment
+
+This project has a comprehensive technical specification (see readme.md) ready for implementation. All development will use Google Apps Script (.gs files) and the Google Workspace APIs.
+
+### Project Structure
+The Apps Script project will follow this modular organization:
+- `main.gs` - Entry point and orchestration
+- `config.gs` - YAML configuration management  
+- `slides-api.gs` - Google Slides API interactions
+- `formatter.gs` - Core formatting logic
+- `ui.gs` - User interface and progress reporting
+- `utils.gs` - Utility functions and helpers
+- `constants.gs` - API scopes, constants, and mappings
+
+### Configuration System
+- **Format**: YAML configuration files for designer-friendly editing
+- **Template Integration**: Reference Google Slides presentation for style extraction
+- **Validation**: JSON schema validation with comprehensive error reporting
+
+### MCP Server Configuration
+
+The project includes an enhanced MCP server configuration that provides access to:
+- **Custom patched `@googleworkspace/mcp-dev-assist`**: Located in `mcp-dev-assist-local/`
+- **Fixed Search Functionality**: Switched from Discovery Engine to Custom Search API
+- **Google Workspace Card previews**: Working with API key `YOUR_GOOGLE_API_KEY_HERE`
+- **Up-to-date API reference materials**: Custom Search Engine ID `701ecba480bf443fa`
+
+**Configuration**: Use local modified package via `npx tsx mcp-dev-assist-local/src/index.ts --stdio`
+
+### Key Google Workspace APIs
+
+The project will primarily use:
+- **Apps Script API**: For managing script projects, deployments, and executions
+- **Google Slides API**: For reading and modifying presentation content, formatting, and objects
+  - Primary methods: `presentations.get`, `presentations.batchUpdate`, `presentations.pages.get`
+  - Batch operations: `updateTextStyle`, `updateShapeProperties`, `updateImageProperties`
+- **Google Sheets API**: For chart object formatting and data manipulation (Phase 2+)
+
+### Authentication Requirements
+Required OAuth 2.0 scopes (configured in `apps-script-bundle.json`):
+- `https://www.googleapis.com/auth/presentations` - Read and modify presentations
+- `https://www.googleapis.com/auth/drive.readonly` - Access reference templates  
+- `https://www.googleapis.com/auth/spreadsheets` - Chart modifications (Phase 2+)
+
+**Deployment Authentication**: Requires OAuth 2.0 flow for Apps Script API with scopes:
+- `https://www.googleapis.com/auth/drive`
+- `https://www.googleapis.com/auth/drive.scripts` 
+- `https://www.googleapis.com/auth/script.projects`
+
+## Development Phases
+
+The project follows a phased approach:
+
+1. **Phase 1**: Standalone Apps Script with hardcoded formatting rules
+2. **Phase 2**: Template-based formatting using reference Slides presentation
+3. **Phase 3**: Multi-component architecture with UI for feature selection
+4. **Phase 4**: Extended Google Sheets chart formatting capabilities
+5. **Phase 5**: External database for formatting specifications
+6. **Phase 6**: Google Cloud Platform integration for enterprise use
+
+## Testing Framework
+
+The project includes comprehensive testing specifications covering:
+- **Unit Tests**: Configuration parsing, API integration, formatting logic
+- **Integration Tests**: End-to-end presentation processing with all object types
+- **Performance Tests**: 50-slide presentations processed in <60 seconds
+- **User Acceptance Tests**: Real-world scenario validation
+
+### Test 1 - Font Swapping (Primary Test Case)
+- Target presentation: `https://docs.google.com/presentation/d/1_WxqIvBQ2ArGjUqamVhVYKdAie5YrEgXmmUFMgNNpPA/`
+- Requirements:
+  - Process all objects including notes pages
+  - Change "Comic Sans MS" fonts to "Arial"
+  - Change "Arial" fonts to "Comic Sans MS"
+- Expected: All font changes applied correctly with detailed success/error reporting
+
+### Additional Test Scenarios
+- **Comprehensive Object Types**: Multi-slide presentation with text, shapes, images, tables, charts
+- **Large Presentation Performance**: 50 slides with 20+ objects each
+- **Error Handling**: Permission errors, locked objects, API failures
+- **Template Integration**: Reference presentation + YAML configuration merging
+
+## Performance Requirements
+
+- Process presentations up to 50 slides
+- Handle slides with tens of objects each  
+- Complete processing in under 60 seconds
+- Memory usage: <100MB peak
+- Success rate: >95% of objects formatted correctly
+- API efficiency: Intelligent batching and rate limiting
+
+## Current Project Status
+
+**Apps Script Implementation: COMPLETED** ✅
+- All 6 core .gs files implemented and functional (main, config, slides-api, formatter, ui, utils, constants)
+- Font swapping logic complete (Comic Sans MS ↔ Arial) with configurable YAML mappings
+- Google Slides API integration with retry logic and intelligent batching
+- Progress UI with halt capability and error reporting
+- Test presentation configured: `1_WxqIvBQ2ArGjUqamVhVYKdAie5YrEgXmmUFMgNNpPA`
+- **Phase 1 implementation ready for testing**
+
+**Automated Deployment System: IN PROGRESS** 🚧
+- **Node.js deployment tools**: Complete with Google Drive/Apps Script API integration
+- **Multiple deployment strategies**: 8 different auth flow variants for testing
+- **MCP Server Enhancement**: Created patched `@googleworkspace/mcp-dev-assist` for efficient documentation access
+- **OAuth 2.0 Setup**: **BLOCKED** - requires localhost webserver for auth callback
+
+**Next Critical Step: OAuth 2.0 Completion**
+Need to migrate to local Claude environment to complete OAuth flow and deploy Apps Script project to Google account.
+
+## Implementation Notes
+
+### User Interface Requirements
+- Simple "working" progress indicator without percentage completion
+- Graceful halt execution capability
+- Error reporting with hyperlinked deep links to specific slides
+- URL format: `https://docs.google.com/presentation/d/{presentationId}/edit#slide=id.{slideId}`
+
+### Chart Strategy Decision
+- **Phase 1**: Local chart modification (simpler implementation, immediate results)
+- **Phase 2+**: Optional remote chart modification (persistent changes, requires additional permissions)
+
+### Error Handling Approach
+- Skip failed objects and continue processing
+- Provide detailed error list for manual resolution
+- Maintain graceful degradation for partial completion
+
+## Key Documentation Links
+
+- Apps Script API concepts: https://developers.google.com/apps-script/api/concepts
+- Google Slides API: https://developers.google.com/workspace/slides/api/guides/overview  
+- Google Workspace Add-ons: https://developers.google.com/workspace/add-ons/editors/gsao

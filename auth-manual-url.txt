@@ -1,0 +1,15 @@
+OAuth Authorization URL:
+
+Copy this entire URL and open in your browser:
+──────────────────────────────────────────────────
+https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.scripts%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fscript.projects&prompt=consent&origin=https%3A%2F%2Fscript.google.com&response_type=code&client_id=1018230309720-2d7220tga14aeljajngrknmtg4js15hp.apps.googleusercontent.com&redirect_uri=postmessage
+──────────────────────────────────────────────────
+
+Instructions:
+1. Open the URL above in your browser
+2. Sign in and grant permissions  
+3. Copy the authorization code shown
+4. Return to the terminal and paste it when prompted
+
+Note: You may see "This app isn't verified" - click "Advanced" then "Go to MIT-Dev (unsafe)" to continue.
+This is normal for development OAuth applications.
