@@ -7,6 +7,7 @@ This document provides a comprehensive procedure for properly closing a Claude C
 ### 1. **Repository State Management**
 - [ ] **Commit Working Changes**: Ensure all meaningful work is committed to git
 - [ ] **Clean Workspace**: Remove temporary files, failed experiments, or test artifacts
+- [ ] **Clean Development Artifacts**: Remove screenshots, test files, debug outputs, and temporary dev files
 - [ ] **Check Git Status**: Run `git status` to verify clean working directory
 - [ ] **Push to Remote**: Ensure all commits are pushed to GitHub/remote repository
 
