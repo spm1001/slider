@@ -1,4 +1,6 @@
-# Specification for an Apps Script tool for Google Slides and Sheets
+# Technical Specification: Google Slides Formatter
+
+> 🚀 **Ready to deploy?** See [README.md](./README.md) for installation and deployment instructions.
 
 ## Overview
 This tool is meant to work on a Google Slides presentation and any linked objects, especially graphics charts inserted from Google Sheets, and ensure that everything is consistently formatted according to our standard template.
