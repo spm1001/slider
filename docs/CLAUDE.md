@@ -186,6 +186,23 @@ The project includes comprehensive testing specifications covering:
 
 When teaching new technical concepts, always append to `LEARNING_LOG.md` following the established format.
 
+## Git Identity and Privacy
+
+### **CRITICAL: Git Identity Configuration**
+**ALWAYS use GitHub noreply identity for all commits:**
+```bash
+git config --global user.name "spm1001"
+git config --global user.email "spm1001@users.noreply.github.com"
+```
+
+**NEVER commit with machine-specific identities** (e.g., `modha@kube.lan`) - these expose private information.
+
+**If identity exposure occurs:**
+1. Immediately rewrite git history using `git filter-branch`
+2. Force push corrected history to remote
+3. Update all machine git configurations
+4. Document procedures to prevent recurrence
+
 ## Security Infrastructure and Procedures
 
 ### Critical Security Status
