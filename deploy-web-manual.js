@@ -108,10 +108,25 @@ Please ensure your credentials.json file is in the project directory.
 
   async loadToken() {
     const tokenPath = path.join(this.scriptsFolder, 'token.json');
-    if (!fs.existsSync(tokenPath)) {
-      throw new Error('Token file not found');
+    
+    // Try GitHub Secrets first (for machine portability)
+    if (process.env.OAUTH_REFRESH_TOKEN) {
+      console.log('🔑 Using OAuth token from environment variables');
+      return {
+        refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+        access_token: process.env.OAUTH_ACCESS_TOKEN || null,
+        scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.scripts https://www.googleapis.com/auth/script.projects",
+        token_type: "Bearer",
+        expiry_date: process.env.OAUTH_EXPIRY_DATE || Date.now() - 1000 // Force refresh if no expiry
+      };
     }
     
+    // Fall back to local token.json file
+    if (!fs.existsSync(tokenPath)) {
+      throw new Error('Token file not found and no OAUTH_REFRESH_TOKEN environment variable provided');
+    }
+    
+    console.log('🔑 Using OAuth token from local file');
     return JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
   }
 
