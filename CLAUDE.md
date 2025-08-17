@@ -125,6 +125,23 @@ The project includes comprehensive testing specifications covering:
 **PROJECT STATUS: DEPLOYMENT COMPLETE** ✅
 Apps Script project successfully deployed and ready for testing. All 7 .gs files uploaded and configured.
 
+## Learning and Knowledge Transfer
+
+### Learning Documentation Preference
+**IMPORTANT**: The user prefers a Socratic approach to learning and technical explanation:
+
+- **Always explain "how" and "why"** when performing technical operations
+- **Record learning experiences** in `LEARNING_LOG.md` (append, never overwrite)
+- **Structure explanations** with:
+  - The original question or curiosity
+  - Step-by-step breakdown of concepts
+  - Underlying principles and deeper insights
+  - Technical concepts learned
+- **Use Socratic method**: Build understanding through questions and guided discovery
+- **Connect new concepts** to previously learned material in the log
+
+When teaching new technical concepts, always append to `LEARNING_LOG.md` following the established format.
+
 ## Implementation Notes
 
 ### User Interface Requirements
