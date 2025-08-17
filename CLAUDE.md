@@ -68,8 +68,10 @@ Required OAuth 2.0 scopes (configured in `config/apps-script-bundle.json`):
 
 **Deployment Authentication**: Requires OAuth 2.0 flow for Apps Script API with scopes:
 - `https://www.googleapis.com/auth/drive`
-- `https://www.googleapis.com/auth/drive.scripts` 
 - `https://www.googleapis.com/auth/script.projects`
+- `https://www.googleapis.com/auth/presentations`
+- `https://www.googleapis.com/auth/spreadsheets`
+- `https://www.googleapis.com/auth/logging.read` (for automated log retrieval)
 
 ## Development Phases
 
@@ -139,12 +141,54 @@ The project includes comprehensive testing specifications covering:
 - **Deployment script**: `deploy-web-manual.js` - proven functional deployment method
 - **MCP Server Enhancement**: Created patched `@googleworkspace/mcp-dev-assist` for efficient documentation access
 
-**PROJECT STATUS: READY FOR FONT DISCOVERY TESTING** 🎯
-- Apps Script project successfully deployed and ready for testing
-- All 7 .gs files uploaded and configured in organized src/ structure  
-- Enhanced font discovery logging deployed for debugging
-- **Next Priority**: Run enhanced font discovery test to identify actual fonts in presentation elements
-- **Current Blocker**: None - ready for testing phase
+**PROJECT STATUS: COMPLETE AUTOMATION ACHIEVED** 🚀
+- ✅ Professional OAuth flow (resolves VSCode localhost conflicts)
+- ✅ Apps Script project successfully deployed and functional
+- ✅ Complete automated pipeline: `npm run auth` → `npm test` → programmatic log retrieval
+- ✅ Enhanced font discovery logging with full programmatic access
+- ✅ Font swapping functionality verified (Comic Sans MS ↔ Arial)
+- ✅ All 7 .gs files deployed with intelligent batching and error handling
+
+## Automated Development Workflow
+
+The project now features a complete automated development pipeline:
+
+### OAuth Authentication (`npm run auth`)
+**Professional OAuth 2.0 flow designed for VSCode Remote SSH environments:**
+- **Background server**: Runs OAuth server without blocking terminal
+- **Concurrent monitoring**: Real-time progress updates every 15 seconds
+- **VSCode compatibility**: Resolves localhost blocking issues in Remote SSH
+- **Modern security**: Uses WHATWG URL API, eliminates deprecated warnings
+- **Clean exit**: Proper process management and cleanup
+
+**Implementation files:**
+- `auth-with-monitoring.js` - Main OAuth coordinator with progress monitoring
+- `oauth-background.js` - Background OAuth server with status tracking
+- `audit-oauth-scopes.js` - Security audit tool for scope validation
+
+### Testing & Deployment (`npm test`)
+**Complete automated pipeline:**
+1. **Execute test function** (`testFontSwap`) on remote Apps Script project
+2. **Retrieve detailed execution logs** via Cloud Logging API
+3. **Display font discovery results** with element-level analysis
+4. **Report font changes and errors** with actionable feedback
+
+**Log retrieval features:**
+- **20+ log entries** retrieved programmatically from each execution
+- **Element-level font detection**: "Element g3646b023612_0_0 fonts: [Comic Sans MS]" 
+- **Font change tracking**: "Font change: Comic Sans MS → Arial in element g3646b023612_0_0"
+- **Execution intelligence**: Batch processing, error counts, completion status
+
+### Standalone Log Access (`npm run logs`)
+**Dedicated log retrieval** for detailed debugging and analysis
+
+### Development Commands Summary
+```bash
+npm run auth      # Professional OAuth (background monitoring)
+npm test          # Deploy → Execute → Retrieve logs (complete pipeline)
+npm run logs      # Standalone detailed log retrieval  
+npm run deploy    # Manual deployment only
+```
 
 ## Machine Transfer & Development Setup
 

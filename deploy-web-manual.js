@@ -15,7 +15,10 @@ class AppsScriptWebManualDeployer {
     this.requiredScopes = [
       'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/drive.scripts',
-      'https://www.googleapis.com/auth/script.projects'
+      'https://www.googleapis.com/auth/script.projects',
+      'https://www.googleapis.com/auth/presentations',
+      'https://www.googleapis.com/auth/spreadsheets',
+      'https://www.googleapis.com/auth/logging.read'
     ];
     
     // Load environment variables
@@ -217,11 +220,12 @@ Instructions for SSH users:
     const files = [];
     const fileExtensions = ['.gs'];
     
-    // Read all .gs files in the current directory
-    const dirFiles = fs.readdirSync(this.scriptsFolder);
+    // Read all .gs files in the src directory
+    const srcFolder = path.join(this.scriptsFolder, 'src');
+    const dirFiles = fs.readdirSync(srcFolder);
     
     for (const fileName of dirFiles) {
-      const filePath = path.join(this.scriptsFolder, fileName);
+      const filePath = path.join(srcFolder, fileName);
       const ext = path.extname(fileName);
       
       if (fileExtensions.includes(ext)) {
@@ -281,9 +285,58 @@ Instructions for SSH users:
       ],
       runtimeVersion: 'V8',
       executionApi: {
-        access: 'MYSELF'
+        access: 'ANYONE'
       }
     };
+  }
+
+  async createApiExecutableDeployment(scriptId) {
+    console.log('🔧 Creating API executable deployment...');
+    
+    try {
+      // Check if deployment already exists
+      const deployments = await this.script.projects.deployments.list({
+        scriptId: scriptId
+      });
+      
+      // Look for existing API executable deployment
+      let apiDeployment = null;
+      if (deployments.data.deployments) {
+        apiDeployment = deployments.data.deployments.find(d => 
+          d.deploymentConfig && 
+          d.deploymentConfig.description === 'API Executable Deployment'
+        );
+      }
+      
+      if (apiDeployment) {
+        console.log('📋 API executable deployment already exists');
+        console.log(`🔗 Deployment ID: ${apiDeployment.deploymentId}`);
+        return apiDeployment.deploymentId;
+      }
+      
+      // Create new API executable deployment
+      const deployment = await this.script.projects.deployments.create({
+        scriptId: scriptId,
+        resource: {
+          deploymentConfig: {
+            scriptId: scriptId,
+            description: 'API Executable Deployment',
+            manifestFileName: 'appsscript',
+            versionNumber: 'HEAD'
+          }
+        }
+      });
+      
+      console.log('✅ API executable deployment created successfully!');
+      console.log(`🔗 Deployment ID: ${deployment.data.deploymentId}`);
+      return deployment.data.deploymentId;
+      
+    } catch (error) {
+      console.log('⚠️  API deployment creation failed (continuing anyway):');
+      console.log('   This may be expected if using default execution permissions');
+      console.log('   Error:', error.message);
+      return null;
+    }
   }
 
   async findExistingProject() {
@@ -360,6 +413,9 @@ Instructions for SSH users:
       
       console.log('✅ Apps Script project updated successfully!');
       console.log(`🌐 Project URL: ${projectUrl}`);
+      
+      // Create API executable deployment
+      await this.createApiExecutableDeployment(projectId);
       
       return { projectId, projectUrl };
     } catch (error) {

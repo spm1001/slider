@@ -4,6 +4,105 @@ This file records technical concepts learned during development, with step-by-st
 
 ---
 
+## OAuth Scopes vs Client Configuration - A Critical Distinction
+
+**Original Question**: Why was OAuth consent spinning when we added the Cloud Logging scope?
+
+**The Insight**: OAuth scopes are configured at the **Google Cloud Project level** in the OAuth consent screen, NOT at the individual OAuth client level. This is a fundamental architecture decision that many developers miss.
+
+**Key Learning Points**:
+- **OAuth Consent Screen** (project-level): Defines which scopes your entire project is allowed to request
+- **OAuth Client Configuration** (client-level): Defines redirect URIs, domains, but NOT scopes
+- **OAuth Request** (runtime): Can only request scopes that were pre-approved in the consent screen
+
+**Why This Matters**:
+- If you request a scope in your code that isn't in the project's consent screen, OAuth will fail
+- Adding scopes requires updating the consent screen FIRST, then regenerating tokens
+- This is a security feature - prevents applications from requesting arbitrary permissions
+
+**The Fix**: Go to Google Cloud Console → APIs & Services → OAuth consent screen → Scopes → "Add or remove scopes" and add required scopes at the project level.
+
+**Technical Principle**: OAuth follows a "pre-approval" security model where permissions must be declared and approved before they can be requested at runtime.
+
+---
+
+## Claude Code UI Behavior with Long URLs
+
+**Important Discovery**: Claude Code's UI breaks long URLs when displayed in the terminal, making them unclickable and potentially corrupted.
+
+**The Issue**: OAuth URLs with multiple scopes become very long and get wrapped/broken in the Claude Code interface, preventing direct clicking and copying.
+
+**The Solution**: Always save long URLs to a text file (like `oauth-url.txt`) so users can access the complete, unbroken URL easily.
+
+**Best Practice**: For any URLs longer than ~100 characters in Claude Code development workflows, write them to a file rather than just displaying them in terminal output.
+
+---
+
+## OAuth Security Architecture and Scope Management
+
+**The Challenge**: Understanding the distinction between API keys, OAuth scopes, and the principle of least privilege in Google Cloud Platform integrations.
+
+**Key Security Concepts Learned**:
+
+### 1. Two-Token Authentication Model
+Our system uses **two separate authentication mechanisms**:
+
+**A. API Keys** (stateless, project-level):
+- `GOOGLE_API_KEY` - For MCP Custom Search API (development tools)
+- `DEPLOYMENT_API_KEY` - For Google APIs that support key-based auth
+- **Limitation**: Cannot access user data, limited to certain APIs
+- **Security**: Restricted by IP, referrer, or API restrictions in GCP Console
+
+**B. OAuth Tokens** (user-delegated, short + long lived):
+- `access_token` - Short-lived (1 hour), actual API calls
+- `refresh_token` - Long-lived (months/years), generates new access tokens
+- **Capability**: Can access user's private data with specific scopes
+- **Security**: User must explicitly consent to each scope
+
+### 2. OAuth Scope Categories for our Use Case
+
+**Core Google Apps Script Operations** (minimum required):
+- `https://www.googleapis.com/auth/script.projects` - Create/update Apps Script projects
+- `https://www.googleapis.com/auth/drive` - Access Drive files for deployment
+
+**Document Access** (for slide processing):
+- `https://www.googleapis.com/auth/presentations` - Read/modify Google Slides
+- `https://www.googleapis.com/auth/spreadsheets` - Read/modify Google Sheets (future charts)
+
+**Development/Debugging** (optional but valuable):
+- `https://www.googleapis.com/auth/script.processes` - View execution history
+- `https://www.googleapis.com/auth/logging.read` - Detailed execution logs
+
+**Potentially Excessive** (review needed):
+- `https://www.googleapis.com/auth/drive.scripts` - May be redundant with script.projects
+- `https://www.googleapis.com/auth/script.deployments` - Only needed for version management
+
+### 3. The IDE/Localhost Conflict Issue
+
+**Root Cause**: VS Code and other IDEs commonly use port 3000 for internal services, creating conflicts with OAuth redirect URIs.
+
+**Current Workaround**: Using port 32790 and manual process termination.
+
+**Better Solutions** (for production deployment):
+1. **Use random/dynamic ports**: Generate available port programmatically
+2. **Use native OAuth flows**: Google Cloud SDK's `gcloud auth` flow
+3. **Use service accounts**: For server-to-server scenarios (different security model)
+4. **Use desktop OAuth flow**: Different redirect URI pattern (urn:ietf:wg:oauth:2.0:oob)
+
+### 4. Principle of Least Privilege Audit
+
+**Current State**: Need to review and minimize to essential scopes only.
+
+**Action Items**:
+1. Test with minimal scope set (script.projects, presentations)
+2. Add additional scopes only when specific features require them
+3. Document which features require which scopes
+4. Separate development vs production scope requirements
+
+**Security Insight**: OAuth scope creep is a common vulnerability - start minimal and expand only as needed.
+
+---
+
 ## Session 1: Git Magic - Working with Remote Files from Local Environment
 
 ### The Question That Started It All

@@ -71,3 +71,11 @@ function testFontSwap() {
     throw error;
   }
 }
+
+function simpleTest() {
+  return {
+    message: 'Hello from Apps Script!',
+    timestamp: new Date().toISOString(),
+    success: true
+  };
+}
