@@ -107,14 +107,21 @@ The project includes comprehensive testing specifications covering:
 - Test presentation configured: `1_WxqIvBQ2ArGjUqamVhVYKdAie5YrEgXmmUFMgNNpPA`
 - **Phase 1 implementation ready for testing**
 
-**Automated Deployment System: IN PROGRESS** 🚧
+**Repository & Version Control: COMPLETED** ✅
+- **GitHub Repository**: https://github.com/spm1001/slider
+- **Initial commit**: All project files committed and pushed to GitHub
+- **Git authentication**: Configured via GitHub CLI (user: spm1001)
+- **Remote origin**: Properly configured for clone/pull operations
+- **Ready for local development**: Can be cloned to any machine with `git clone`
+
+**Automated Deployment System: COMPLETED** ✅
 - **Node.js deployment tools**: Complete with Google Drive/Apps Script API integration
 - **Multiple deployment strategies**: 8 different auth flow variants for testing
 - **MCP Server Enhancement**: Created patched `@googleworkspace/mcp-dev-assist` for efficient documentation access
-- **OAuth 2.0 Setup**: **BLOCKED** - requires localhost webserver for auth callback
+- **GitHub integration**: All deployment tools committed and available
 
-**Next Critical Step: OAuth 2.0 Completion**
-Need to migrate to local Claude environment to complete OAuth flow and deploy Apps Script project to Google account.
+**Next Critical Step: Local Environment Setup**
+Clone repository to local machine with localhost capabilities to complete OAuth 2.0 flow and deploy Apps Script project to Google account.
 
 ## Implementation Notes
 
@@ -133,8 +140,30 @@ Need to migrate to local Claude environment to complete OAuth flow and deploy Ap
 - Provide detailed error list for manual resolution
 - Maintain graceful degradation for partial completion
 
+## Git Workflow & Repository Management
+
+### Repository Structure
+- **GitHub Repository**: https://github.com/spm1001/slider
+- **Local Repository**: `/home/modha/slider/` (SSH environment)
+- **Git Authentication**: GitHub CLI with token (`gho_****` with repo permissions)
+- **Remote Configuration**: `origin` → `https://github.com/spm1001/slider.git`
+
+### Git Concepts for Development
+- **Multiple Remotes**: Can add additional remotes for backups, forks, or deployment targets
+- **Remote Naming**: `origin` is convention (not special meaning) - other remotes can be `upstream`, `backup`, `staging`, etc.
+- **Branch Tracking**: Local `main` branch tracks `origin/main` for synchronization
+- **Security**: `credentials.json` excluded from commits (contains sensitive OAuth data)
+
+### Clone Instructions for Local Development
+```bash
+git clone https://github.com/spm1001/slider.git
+cd slider
+npm install
+```
+
 ## Key Documentation Links
 
+- **Repository**: https://github.com/spm1001/slider
 - Apps Script API concepts: https://developers.google.com/apps-script/api/concepts
 - Google Slides API: https://developers.google.com/workspace/slides/api/guides/overview  
 - Google Workspace Add-ons: https://developers.google.com/workspace/add-ons/editors/gsao
