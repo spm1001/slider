@@ -217,4 +217,115 @@ token.json
 
 ---
 
+## Session 3: Apps Script Deployment Authentication Architecture Discovery
+
+### The Question That Started It All
+**You asked**: "But what API key are we adding those scopes to? I purged the old one."
+
+**Context**: After successfully implementing comprehensive security measures and cleaning exposed API keys from git history, we needed to redeploy the Apps Script project. However, the deployment kept failing with generic "Bad Request" errors, leading to a deep investigation of Google Apps Script authentication requirements.
+
+### Step-by-Step Exploration
+
+**Initial Investigation**:
+The deployment script was failing with "Bad Request" errors despite having valid OAuth credentials in `credentials.json`. We initially thought this was an API enablement issue, but all required APIs were enabled at the Google Cloud project level.
+
+**Deeper Dive**:
+Through systematic debugging, we discovered the Google Apps Script deployment actually requires a **dual authentication approach**:
+
+1. **OAuth 2.0 Client** (`credentials.json`) - Provides user authorization and permissions
+2. **API Key** (`DEPLOYMENT_API_KEY`) - Provides application-level authentication for API calls
+
+**Hands-On Discovery**:
+```javascript
+// Original approach (OAuth only) - Failed with "Bad Request"
+this.drive = google.drive({ version: 'v2', auth: this.auth });
+
+// Enhanced approach (OAuth + API Key) - Still failed initially
+this.drive = google.drive({ 
+  version: 'v2', 
+  auth: this.auth,
+  key: this.deploymentApiKey 
+});
+
+// Final working approach (Apps Script API + dual auth)
+this.script = google.script({ 
+  version: 'v1', 
+  auth: this.auth,
+  key: this.deploymentApiKey 
+});
+```
+
+**The Critical Discovery**:
+The breakthrough came when we switched from Drive API to Apps Script API and got a **specific error message**: "User has not enabled the Apps Script API. Enable it by visiting https://script.google.com/home/usersettings"
+
+### Underlying Principles
+
+**Core Concept**: **Multi-Layer Permission Architecture**
+Google Apps Script requires permissions at THREE levels:
+1. **Google Cloud Project Level**: APIs must be enabled in the console
+2. **User Account Level**: Apps Script API must be enabled in user settings
+3. **Application Level**: Both OAuth credentials and API keys are required
+
+**Why It Works This Way**:
+- **OAuth 2.0**: Handles user consent and authorization scopes
+- **API Key**: Provides application identification and quota management
+- **User-Level Settings**: Additional security layer for Apps Script execution
+- **Dual Authentication**: Prevents both unauthorized access AND quota abuse
+
+**Broader Context**:
+This reflects Google's defense-in-depth security model where critical services (like Apps Script that can execute code) require multiple authentication factors rather than relying on a single credential type.
+
+### Technical Insights Gained
+
+- **Key Insight 1**: Generic "Bad Request" errors often mask specific permission issues - always check for user-level settings
+- **Key Insight 2**: Google APIs may require both OAuth AND API key authentication simultaneously 
+- **Key Insight 3**: Different Google APIs have different authentication requirements (Drive API ≠ Apps Script API)
+- **Key Insight 4**: Error message evolution reveals the path to solution ("Bad Request" → "Forbidden" → Success)
+- **Key Insight 5**: Security architecture benefits from separate API keys (development vs deployment)
+
+**Code Example**:
+```javascript
+// Complete authentication setup
+async initializeDriveAPI() {
+  const driveConfig = { version: 'v2', auth: this.auth };
+  const scriptConfig = { version: 'v1', auth: this.auth };
+  
+  if (this.deploymentApiKey) {
+    driveConfig.key = this.deploymentApiKey;
+    scriptConfig.key = this.deploymentApiKey;
+  }
+  
+  this.drive = google.drive(driveConfig);
+  this.script = google.script(scriptConfig);
+}
+```
+
+### Connections to Previous Learning
+
+This learning connects to:
+- **Security Infrastructure Implementation**: The comprehensive secrets management system we built provided the foundation for secure API key handling
+- **Git History Cleaning**: The incident that exposed the original API key led to implementing proper dual-key architecture
+- **Environment Variable Management**: The .env.template system we created accommodated the dual API key requirement
+
+### Practical Applications
+
+**Immediate Applications**:
+- Successfully deployed Apps Script project with 7 .gs files
+- Established secure, reproducible deployment process
+- Created template for future Apps Script deployments
+
+**Future Applications**:
+- Authentication troubleshooting methodology for other Google APIs
+- Multi-layer permission debugging approach for cloud services
+- Security-first API key architecture for team development
+
+**Tools and Techniques Learned**:
+- Google Apps Script API vs Drive API for project deployment
+- User-level API enablement in Google Apps Script settings
+- Dual authentication pattern implementation
+- Error message interpretation and escalation debugging
+- OAuth token lifecycle management (access tokens vs refresh tokens)
+
+---
+
 *This log will be continuously updated with new learning experiences, following the Socratic tradition of building understanding through questions and step-by-step exploration.*

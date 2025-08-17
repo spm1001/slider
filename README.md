@@ -43,9 +43,26 @@ npm install
 
 ### 2️⃣ Configure Google Cloud
 1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-2. Create OAuth 2.0 Client ID (**Web application** - not Desktop)
-3. Download and save as `credentials.json`
-4. Enable required APIs: Drive, Slides, Sheets, Apps Script
+2. Create **TWO API keys** with different scopes:
+   - **Development Key**: Custom Search API (for MCP documentation lookup)
+   - **Deployment Key**: Apps Script + Drive + Slides + Sheets APIs  
+3. Create OAuth 2.0 Client ID (**Web application** - not Desktop)
+4. Download OAuth client and save as `credentials.json`
+5. Enable required APIs: Drive, Slides, Sheets, Apps Script
+
+### 2️⃣.5 Enable User-Level Apps Script API
+🚨 **CRITICAL**: Visit https://script.google.com/home/usersettings and **enable the Apps Script API**
+
+This user-level permission is required in addition to project-level API enablement. Without this step, deployment will fail with permission errors.
+
+### 2️⃣.6 Configure Environment Variables
+```bash
+# Copy template and fill in your API keys
+cp .env.template .env
+# Edit .env with your actual API keys:
+# GOOGLE_API_KEY=your_development_key_here
+# DEPLOYMENT_API_KEY=your_deployment_key_here
+```
 
 ### 3️⃣ Deploy
 ```bash

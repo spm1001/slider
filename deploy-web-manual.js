@@ -17,6 +17,51 @@ class AppsScriptWebManualDeployer {
       'https://www.googleapis.com/auth/drive.scripts',
       'https://www.googleapis.com/auth/script.projects'
     ];
+    
+    // Load environment variables
+    this.loadEnvVars();
+  }
+
+  loadEnvVars() {
+    // Load deployment API key from environment
+    require('dotenv').config();
+    this.deploymentApiKey = process.env.DEPLOYMENT_API_KEY;
+    
+    if (!this.deploymentApiKey) {
+      console.warn('⚠️  DEPLOYMENT_API_KEY not found in environment variables');
+      console.warn('   Add DEPLOYMENT_API_KEY=your_key_here to .env file');
+    } else {
+      console.log('✅ Deployment API key loaded from environment');
+    }
+  }
+
+  async initializeDriveAPI() {
+    // Initialize Drive API with both OAuth and API key
+    const driveConfig = { 
+      version: 'v2', 
+      auth: this.auth 
+    };
+    
+    // Add API key if available
+    if (this.deploymentApiKey) {
+      driveConfig.key = this.deploymentApiKey;
+      console.log('🔑 Using deployment API key for enhanced authentication');
+    }
+    
+    this.drive = google.drive(driveConfig);
+    
+    // Also initialize Apps Script API for project updates
+    const scriptConfig = { 
+      version: 'v1', 
+      auth: this.auth 
+    };
+    
+    if (this.deploymentApiKey) {
+      scriptConfig.key = this.deploymentApiKey;
+    }
+    
+    this.script = google.script(scriptConfig);
+    console.log('🔧 Apps Script API initialized');
   }
 
   async authenticate() {
@@ -38,8 +83,8 @@ class AppsScriptWebManualDeployer {
       this.auth.setCredentials(token);
       console.log('✅ Using existing authentication token');
       
-      // Test if token is still valid
-      this.drive = google.drive({ version: 'v2', auth: this.auth });
+      // Test if token is still valid and initialize Drive API
+      await this.initializeDriveAPI();
       await this.drive.about.get();
       console.log('✅ Token is valid');
       
@@ -140,7 +185,7 @@ Instructions for SSH users:
           console.log('💾 Token saved for future use');
           
           // Initialize Drive API
-          this.drive = google.drive({ version: 'v2', auth: this.auth });
+          await this.initializeDriveAPI();
           console.log('✅ Authentication successful');
           
           resolve(tokens);
@@ -287,18 +332,13 @@ Instructions for SSH users:
   async updateExistingProject(projectId, files) {
     console.log(`🔄 Updating existing Apps Script project (${projectId})...`);
     
-    const projectData = {
-      files: files
-    };
-    
     try {
-      await this.drive.files.update({
-        fileId: projectId,
-        media: {
-          mimeType: 'application/vnd.google-apps.script+json',
-          body: JSON.stringify(projectData)
-        },
-        uploadType: 'media'
+      console.log(`📋 Updating project with ${files.length} files...`);
+      const response = await this.script.projects.updateContent({
+        scriptId: projectId,
+        resource: {
+          files: files
+        }
       });
       
       const projectUrl = `https://script.google.com/d/${projectId}/edit`;
@@ -308,6 +348,12 @@ Instructions for SSH users:
       
       return { projectId, projectUrl };
     } catch (error) {
+      console.error('❌ Detailed error information:');
+      console.error('   Status:', error.code || 'Unknown');
+      console.error('   Message:', error.message);
+      if (error.response) {
+        console.error('   Response data:', JSON.stringify(error.response.data, null, 2));
+      }
       throw new Error(`Failed to update project: ${error.message}`);
     }
   }
