@@ -10,7 +10,7 @@ Execute these steps in sequence, using Claude Code's planning methodology where 
 - [ ] **Review THIS_SESSION.md**: Assess what was accomplished during the session
 - [ ] **Extract Key Points**: Identify the most important outcomes, learnings, and decisions
 - [ ] **Create Session Summary**: Condense THIS_SESSION.md content into a concise summary
-- [ ] **Append to SESSION_NOTES**: Add the session summary to the cumulative session archive
+- [ ] **Append to ROLLING_NOTES**: Add the session summary to the cumulative session archive
 - [ ] **Prepare LAST_SESSION_SUMMARY**: Create focused summary for the next session startup
 
 ### 2. **Knowledge Transfer & Documentation Updates**
@@ -31,11 +31,10 @@ Execute these steps in sequence, using Claude Code's planning methodology where 
 - [ ] **Use Descriptive Messages**: Ensure commit messages clearly explain both what was changed and why
 - [ ] **Push to Remote**: Ensure all commits are pushed to GitHub/remote repository
 
-### 5. **Session Archive Management**
-- [ ] **Archive THIS_SESSION.md**: Move completed session document to `docs/archived_sessions/`
-- [ ] **Rename with Date**: Use format `THIS_SESSION_YYYY-MM-DD.md` for archived files
-- [ ] **Clean Current Directory**: Remove THIS_SESSION.md from project root
-- [ ] **Maintain Archive Index**: Ensure archived sessions are easily discoverable
+### 5. **Session Processing & Cleanup**
+- [ ] **Process THIS_SESSION.md**: Extract key insights and progress for ROLLING_NOTES.md
+- [ ] **Delete THIS_SESSION.md**: Remove completed session document from project root
+- [ ] **Clean Working Directory**: Ensure no temporary session files remain
 
 ### 6. **Global Template Repository Sync**
 - [ ] **Navigate to Template Repo**: Switch to `/home/modha/claude-project-template/` directory
@@ -159,8 +158,9 @@ This closedown procedure is designed to work seamlessly with the startup procedu
 ### File Lifecycle
 1. **STARTUP.md** guides creation of **THIS_SESSION.md**
 2. **THIS_SESSION.md** serves as working document during session
-3. **CLOSEDOWN.md** processes **THIS_SESSION.md** into archived knowledge
-4. **LAST_SESSION_SUMMARY** provides focused context for next **STARTUP.md** process
+3. **CLOSEDOWN.md** processes **THIS_SESSION.md** content into **ROLLING_NOTES.md**
+4. **THIS_SESSION.md** is deleted after processing
+5. **LAST_SESSION_SUMMARY** provides focused context for next **STARTUP.md** process
 
 ### Knowledge Repository Flow
 - **Local Learning** → **Project CLAUDE.md** (project-specific insights)
@@ -175,7 +175,7 @@ This closedown procedure is designed to work seamlessly with the startup procedu
 - [ ] **Security clean**: No secrets or credentials exposed
 - [ ] **Next session ready**: Clear starting point and context available
 - [ ] **Knowledge preserved**: Important insights documented in appropriate locations
-- [ ] **Archives organized**: Session documents properly stored and accessible
+- [ ] **Session processed**: THIS_SESSION.md content integrated into ROLLING_NOTES.md
 
 ### Success Criteria
 A successful closedown should ensure that:
