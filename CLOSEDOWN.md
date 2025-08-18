@@ -1,73 +1,91 @@
-# Claude Code Session Checkpointing Procedure
+# Claude Code Session Closedown Procedure
 
-This document provides a comprehensive procedure for properly closing a Claude Code session and checkpointing state for continuity across sessions.
+This document provides a structured approach to ending each development session, ensuring proper knowledge transfer and clean project state for the next session.
 
-## Core Checkpointing Steps
+## Core Closedown Steps
 
-### 1. **Repository State Management**
+Execute these steps in sequence, using Claude Code's planning methodology where appropriate:
+
+### 1. **Session Summary Creation**
+- [ ] **Review THIS_SESSION.md**: Assess what was accomplished during the session
+- [ ] **Extract Key Points**: Identify the most important outcomes, learnings, and decisions
+- [ ] **Create Session Summary**: Condense THIS_SESSION.md content into a concise summary
+- [ ] **Append to SESSION_NOTES**: Add the session summary to the cumulative session archive
+- [ ] **Prepare LAST_SESSION_SUMMARY**: Create focused summary for the next session startup
+
+### 2. **Knowledge Transfer & Documentation Updates**
+- [ ] **Update Project CLAUDE.md**: Add any project-specific learnings or process improvements
+- [ ] **Update User CLAUDE.md**: Add any global principles or preferences discovered (~/.claude/CLAUDE.md)
+- [ ] **Update Global Learning Log**: Add technical insights to claude-project-template repository
+- [ ] **Sync Template Repository**: Copy updated user CLAUDE.md to claude-project-template for reuse
+
+### 3. **Repository State Management**
 - [ ] **Commit Working Changes**: Ensure all meaningful work is committed to git
-- [ ] **Clean Workspace**: Remove temporary files, failed experiments, or test artifacts
+- [ ] **Clean Workspace**: Remove temporary files, failed experiments, or test artifacts  
 - [ ] **Clean Development Artifacts**: Remove screenshots, test files, debug outputs, and temporary dev files
 - [ ] **Check Git Status**: Run `git status` to verify clean working directory
+
+### 4. **Dual Commit Strategy**
+- [ ] **Commit Work Changes**: Create commit for functional changes, features, or bug fixes made during session
+- [ ] **Commit Learning Changes**: Separate commit for documentation updates, learning insights, and process improvements
+- [ ] **Use Descriptive Messages**: Ensure commit messages clearly explain both what was changed and why
 - [ ] **Push to Remote**: Ensure all commits are pushed to GitHub/remote repository
 
-### 2. **Documentation Updates**
-- [ ] **Update CLAUDE.md**: Reflect current project status, completed features, and next steps
-- [ ] **Update SESSION_NOTES.md**: Document what was accomplished, lessons learned, and immediate next actions
-- [ ] **Update Project README**: If significant progress was made, update main documentation
-- [ ] **Document Blockers**: Clearly identify any blockers or dependencies for next session
+### 5. **Session Archive Management**
+- [ ] **Archive THIS_SESSION.md**: Move completed session document to `docs/archived_sessions/`
+- [ ] **Rename with Date**: Use format `THIS_SESSION_YYYY-MM-DD.md` for archived files
+- [ ] **Clean Current Directory**: Remove THIS_SESSION.md from project root
+- [ ] **Maintain Archive Index**: Ensure archived sessions are easily discoverable
 
-### 3. **Code Organization & Quality**
-- [ ] **Separate Concerns**: If uncommitted changes span different conceptual tasks, break into distinct commits
-- [ ] **Remove Debug Code**: Clean up console.log statements, temporary variables, or test code
-- [ ] **Code Comments**: Add explanatory comments for complex logic implemented in the session
-- [ ] **Dependency Management**: Update package.json or equivalent if new dependencies were added
+### 6. **Global Template Repository Sync**
+- [ ] **Navigate to Template Repo**: Switch to `/home/modha/claude-project-template/` directory
+- [ ] **Update Global CLAUDE.md**: Copy user-level preferences from `~/.claude/CLAUDE.md`
+- [ ] **Commit Template Updates**: Commit any global learning or preference changes
+- [ ] **Return to Project**: Switch back to project directory
 
-### 4. **Environment & Configuration**
-- [ ] **Configuration Files**: Update any .env.template, config.sample, or setup instructions
-- [ ] **Credentials Security**: Ensure no secrets or API keys are committed to version control
-- [ ] **Environment Documentation**: Update setup instructions if environment requirements changed
-- [ ] **MCP/Tool Configuration**: Document any new tool configurations or MCP server updates
+### 7. **Quality Assurance & Security**
+- [ ] **Security Validation**: Run `./scripts/security-check.sh` to ensure no secrets exposed
+- [ ] **Code Quality**: Remove debug code, temporary variables, or test artifacts
+- [ ] **Test Status**: Document which tests are passing/failing and any issues discovered
+- [ ] **Configuration Security**: Verify no credentials in configuration files
 
-## Advanced Checkpointing for Complex Projects
+### 8. **Next Session Preparation**
+- [ ] **Clear Starting Point**: Ensure next session has obvious entry point and context
+- [ ] **Priority Documentation**: Document most important items for next session
+- [ ] **Blocker Identification**: Note any dependencies or blockers that need resolution
+- [ ] **Resource Availability**: Ensure all necessary tools and access remain available
 
-### 5. **State Preservation for Continuity**
-- [ ] **Active Branch Documentation**: Note which git branch contains active work
-- [ ] **Work-in-Progress**: If leaving work unfinished, create detailed TODO comments in code
-- [ ] **Test Status**: Document which tests are passing/failing and why
-- [ ] **Performance Notes**: Record any performance observations or optimization opportunities
+## Emergency Closedown
 
-### 6. **Cross-Session Context**
-- [ ] **Decision History**: Document key architectural or implementation decisions made
-- [ ] **Failed Approaches**: Note approaches that were tried and why they didn't work
-- [ ] **Resource Links**: Update documentation with any helpful resources discovered
-- [ ] **Tool/Library Evaluation**: Document evaluation of tools, libraries, or approaches
+For abbreviated sessions or emergency situations:
 
-### 7. **Collaboration Preparation**
-- [ ] **Code Review Readiness**: Ensure code is in a state suitable for review
-- [ ] **Deployment Notes**: Update deployment instructions or automation
-- [ ] **Issue Tracking**: Create or update GitHub issues for next development cycles
-- [ ] **Documentation for Others**: Ensure documentation enables others to contribute
+### Minimal Viable Closedown
+1. **Quick Summary**: Create brief summary of session in THIS_SESSION.md notes
+2. **Commit Current State**: `git add . && git commit -m "WIP: [brief description]"`
+3. **Push to Remote**: `git push` to ensure work is backed up
+4. **Mark Incomplete**: Note in commit message or documentation that work is incomplete
+5. **Set Recovery Notes**: Add TODO comments in code for easy session recovery
 
-## Specialized Checkpointing Scenarios
+### Structured Closedown Process
 
-### 8. **Long-Running Development**
-- [ ] **Milestone Documentation**: Document progress toward major milestones
-- [ ] **Technical Debt**: Note accumulated technical debt and remediation plans
-- [ ] **Refactoring Opportunities**: Document code that should be refactored in future sessions
-- [ ] **Performance Baseline**: Record performance metrics if relevant
+Execute these steps using Claude Code's planning methodology:
 
-### 9. **Multi-Environment Projects**
-- [ ] **Environment Status**: Document status across development, staging, production environments
-- [ ] **Configuration Sync**: Ensure configuration files are synchronized across environments
-- [ ] **Deployment State**: Document current deployment status and any pending deployments
-- [ ] **Database/External Services**: Note state of external dependencies
+#### Planning Phase
+1. **Review Session Accomplishments**: Assess what was completed vs. objectives
+2. **Identify Key Learning**: Determine what insights should be preserved
+3. **Plan Documentation Updates**: Decide which files need updates
+4. **Organize Commit Strategy**: Plan how to separate work commits from learning commits
 
-### 10. **Learning & Knowledge Transfer**
-- [ ] **Lessons Learned**: Document new concepts or techniques learned during session
-- [ ] **Reference Materials**: Update links to documentation, tutorials, or resources used
-- [ ] **Best Practices**: Note any best practices discovered or patterns established
-- [ ] **Problem-Solving Notes**: Document complex problems solved and solution approaches
+#### Execution Phase
+5. **Execute Documentation Plan**: Update all identified documentation
+6. **Execute Commit Strategy**: Make planned commits with clear messages
+7. **Execute Archive Process**: Move session documents to appropriate locations
+8. **Execute Template Sync**: Update global knowledge repositories
+
+#### Verification Phase
+9. **Verify Clean State**: Ensure repository is clean and ready for next session
+10. **Verify Knowledge Transfer**: Confirm all important insights are documented
+11. **Verify Next Session Readiness**: Ensure clear starting point exists
 
 ## Verification Checklist
 
@@ -129,4 +147,61 @@ For abbreviated sessions or emergency situations:
 - [Decisions made]
 ```
 
-This comprehensive checkpointing procedure ensures seamless continuity across Claude Code sessions and maintains project momentum regardless of session interruptions. 
+## Integration with STARTUP.md
+
+This closedown procedure is designed to work seamlessly with the startup procedure:
+
+### Session Flow Integration
+- **STARTUP.md creates session structure** → **Session executes against plan** → **CLOSEDOWN.md processes session results**
+- **Knowledge flows forward**: Session insights become input for next session's startup
+- **Clean handoff**: Each closedown creates the context needed for next startup
+
+### File Lifecycle
+1. **STARTUP.md** guides creation of **THIS_SESSION.md**
+2. **THIS_SESSION.md** serves as working document during session
+3. **CLOSEDOWN.md** processes **THIS_SESSION.md** into archived knowledge
+4. **LAST_SESSION_SUMMARY** provides focused context for next **STARTUP.md** process
+
+### Knowledge Repository Flow
+- **Local Learning** → **Project CLAUDE.md** (project-specific insights)
+- **Global Learning** → **User CLAUDE.md** (cross-project principles)  
+- **Technical Learning** → **Template LEARNING_LOG.md** (reusable technical knowledge)
+
+## Quality Assurance
+
+### Final Verification Checklist
+- [ ] **All work committed**: No uncommitted changes remain
+- [ ] **Documentation current**: All files reflect actual project state
+- [ ] **Security clean**: No secrets or credentials exposed
+- [ ] **Next session ready**: Clear starting point and context available
+- [ ] **Knowledge preserved**: Important insights documented in appropriate locations
+- [ ] **Archives organized**: Session documents properly stored and accessible
+
+### Success Criteria
+A successful closedown should ensure that:
+1. **Another person** could understand project status from documentation
+2. **Future sessions** have clear context and starting points
+3. **Knowledge gained** is preserved and accessible
+4. **Security standards** are maintained throughout
+5. **Project momentum** is preserved across session boundaries
+
+## Session Management Philosophy
+
+### Structured Communication
+- **Document decisions**: Don't rely on memory for important choices
+- **Preserve context**: Assume every session might be the last for a while
+- **Build knowledge**: Each session should add to cumulative understanding
+
+### Quality Over Speed
+- **Better documentation**: 10 minutes of closedown saves hours of context rebuilding
+- **Clean commits**: Meaningful commit messages are documentation
+- **Security first**: Never compromise on credential management for speed
+
+### Continuous Improvement
+- **Adapt procedures**: Modify these processes based on what works in practice
+- **Learn from issues**: When sessions end poorly, update procedures to prevent recurrence
+- **Share insights**: Global learning should benefit all future projects
+
+---
+
+**Remember**: The goal is seamless session continuity and knowledge preservation. A well-executed closedown makes the next startup effortless and productive. 
