@@ -4,6 +4,29 @@ This file records technical concepts learned during development, with step-by-st
 
 ---
 
+## Engineering Principle: Prefer Simple Solutions with Fewer Dependencies
+
+**Context**: While implementing mechanical security enforcement to prevent API key exposure, I initially planned to install the pre-commit Python framework with GitLeaks for comprehensive secret detection.
+
+**The Realization**: Instead of adding Python dependencies and external tools, a simple native git hook using our existing `security-check.sh` script provides the same core protection:
+- Runs existing security validation automatically
+- Validates git identity to prevent private email exposure  
+- Blocks commits if either check fails
+- Zero additional dependencies
+- More reliable (fewer potential failure points)
+
+**Why This Matters**: 
+- **Maintenance burden**: Each dependency adds potential for version conflicts, security vulnerabilities, and breaking changes
+- **Deployment complexity**: Fewer dependencies mean easier setup on new machines
+- **Debugging simplicity**: Native solutions are easier to troubleshoot than multi-layer tool chains
+- **Reliability**: Fewer moving parts = fewer ways for the system to fail
+
+**Engineering Principle**: When solving problems, always ask "What's the simplest solution that addresses the core requirement?" Complex solutions should only be chosen when simpler ones are genuinely insufficient.
+
+**Application**: The native git hook catches both API keys (via existing security-check.sh) and git identity issues (the exact problems we encountered) without adding any new dependencies.
+
+---
+
 ## File Location Assumptions - A Pattern to Fix
 
 **Original Problem**: When user mentions a file like "Screenshot 2025-08-17 at 15.37.18.png", I consistently assume it's in `/tmp/` instead of checking the current working directory first.

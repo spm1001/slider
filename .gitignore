@@ -38,6 +38,12 @@ secrets/*key*
 *token*
 *secret*
 
+# MCP Configuration Files (contain API keys)
+.mcp.json
+*.mcp.json
+mcp-config*.json
+*mcp*.json
+
 # Temporary Files and Logs
 *.log
 *.tmp

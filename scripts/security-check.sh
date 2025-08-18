@@ -33,9 +33,14 @@ report_success() {
 # Check 1: Scan for potential API keys
 echo "🔍 Scanning for potential API keys..."
 
-# Google API keys
-if grep -r "AIzaSy[A-Za-z0-9_-]\{35\}" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=scripts --exclude="*.bak" --exclude="LEARNING_LOG.md" --exclude="secrets/incident-response.md" 2>/dev/null; then
+# Google API keys (enhanced detection for MCP configs and all JSON files)
+if grep -r "AIzaSy[A-Za-z0-9_-]\{35\}" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=scripts --exclude-dir=.claude --include="*.json" --include="*.js" --include="*.ts" --include="*.md" --exclude="*.bak" --exclude="LEARNING_LOG.md" --exclude="secrets/incident-response.md" --exclude=".mcp.json.template" 2>/dev/null; then
     report_issue "Google API key pattern detected"
+fi
+
+# Specifically scan for MCP configuration with API keys (exclude .claude directory)
+if grep -r "GOOGLE_API_KEY.*AIzaSy" . --include="*.json" --exclude-dir=.claude --exclude=".mcp.json.template" 2>/dev/null; then
+    report_issue "MCP configuration file contains hardcoded Google API key (use environment variables)"
 fi
 
 # AWS keys
@@ -122,6 +127,8 @@ DANGEROUS_FILES=(
     "token.json"
     "client_secret.json"
     "service-account.json"
+    ".mcp.json"
+    "mcp-config.json"
 )
 
 for file in "${DANGEROUS_FILES[@]}"; do
@@ -129,6 +136,12 @@ for file in "${DANGEROUS_FILES[@]}"; do
         report_issue "Dangerous file is tracked by git: $file"
     fi
 done
+
+# Also check for any MCP config files with patterns
+echo "🔍 Checking for MCP configuration files..."
+if git ls-files | grep -E "\.(mcp\.json|mcp-config\.json)$|^\.mcp\.json$"; then
+    report_issue "MCP configuration file detected in git tracking (should use .mcp.json.template with environment variables)"
+fi
 
 # Check 6: Scan documentation for non-placeholder values
 echo "🔍 Scanning documentation for potential real secrets..."

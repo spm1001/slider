@@ -8,8 +8,8 @@
         "--stdio"
       ],
       "env": {
-        "GOOGLE_API_KEY": "AIzaSyAeOTVUu72ZC_l-VLnFMhCH4VWoOwBeLds",
-        "GOOGLE_SEARCH_ENGINE_ID": "701ecba480bf443fa"
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}",
+        "GOOGLE_SEARCH_ENGINE_ID": "${GOOGLE_SEARCH_ENGINE_ID}"
       }
     }
   }
