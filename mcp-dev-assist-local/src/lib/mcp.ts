@@ -150,7 +150,7 @@ export const createServer = () => {
 			link: z
 				.string()
 				.regex(
-					/^https:\/\/(developers|cloud).google.com\//,
+					/^https:\/\/(developers|cloud)\.google\.com\//,
 					"Link must be a URL to a Google documentation page.",
 				)
 				.describe("Link to the documentation page."),

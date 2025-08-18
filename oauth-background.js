@@ -28,7 +28,7 @@ class BackgroundOAuthFlow {
     const credentials = JSON.parse(fs.readFileSync('credentials.json', 'utf8'));
     const { client_id, client_secret } = credentials.web;
 
-    console.log(`🌐 Using port: ${this.port} (pre-authorized)`);
+    // OAuth server will run on pre-configured port
 
     this.auth = new google.auth.OAuth2(
       client_id,
@@ -126,7 +126,7 @@ class BackgroundOAuthFlow {
 
       this.server.listen(this.port, 'localhost', () => {
         this.status = 'waiting_for_auth';
-        console.log(`🚀 Background server started on port ${this.port}`);
+        console.log('🚀 Background OAuth server started');
         console.log('⏳ Server running in background - waiting for authorization...');
       });
 
@@ -163,7 +163,7 @@ class BackgroundOAuthFlow {
 
   async monitorProgress() {
     const interval = setInterval(() => {
-      console.log(`📊 Status: ${this.getStatus()}`);
+      // Status monitoring active
       
       // Check if token.json was created (success indicator)
       if (fs.existsSync('token.json') && this.status !== 'completed') {
